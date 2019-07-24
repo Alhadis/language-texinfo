@@ -32,30 +32,53 @@ repository:
 			{include: "#comments"}
 			{include: "#dashes"}
 			{include: "#texLine"}
+			{include: "#alias"}
+			{include: "#booleanCommands"}
+			{include: "#symbolCommands"}
+			{include: "#quotation"}
+			{include: "#codeBlocks"}
+			{include: "#conditionals"}
+			{include: "#blockCommands"}
 			{include: "#command"}
 		]
 	
 	
-	# Argument delimiter used in some contexts
-	comma:
-		name: "punctuation.separator.delimiter.comma.texinfo"
-		match: ","
+	# @alias [new]=[existing]
+	alias:
+		name: "meta.command.alias.texinfo"
+		match: "((@)alias)\\s+([^=\\s]+)\\s*(=)\\s*([^=\\s]+)"
+		captures:
+			1: name: "keyword.operator.command.alias.texinfo"
+			2: name: "punctuation.definition.function.texinfo"
+			3: name: "entity.name.function.alias.texinfo"
+			4: name: "punctuation.separator.separator.texinfo"
+			5: name: "entity.name.function.source.texinfo"
 	
 	
-	# Generic command invocation
-	command:
+	# Block-type commands
+	blockCommands:
+		name:  "meta.command.$3.block.texinfo"
+		begin: """(?x) ((@)
+			(cartouche|copying|direntry|display|docbook|documentdescription
+			|enumerate|float|flushleft|flushright|format|ftable|group|itemize
+			|multitable|raggedright|smalldisplay|smallformat|smallindentedblock
+			|table|titlepage|vtable))
+			(?=\\s|$)
+		"""
+		end: "((@)end\\s+\\3)\\b"
+		beginCaptures:
+			1: name: "keyword.operator.command.$3.texinfo"
+			2: name: "punctuation.definition.function.texinfo"
+		endCaptures:
+			1: name: "keyword.operator.command.end-$3.texinfo"
+			2: name: "punctuation.definition.function.texinfo"
+		patterns: [include: "#main"]
+	
+	
+	# Commands which take boolean-like values as their only argument
+	booleanCommands:
 		patterns: [{
-			# @alias [new]=[existing]
-			name: "meta.command.alias.texinfo"
-			match: "((@)alias)\\s+([^=\\s]+)\\s*(=)\\s*([^=\\s]+)"
-			captures:
-				1: name: "keyword.operator.command.alias.texinfo"
-				2: name: "punctuation.definition.function.texinfo"
-				3: name: "entity.name.function.alias.texinfo"
-				4: name: "punctuation.separator.separator.texinfo"
-				5: name: "entity.name.function.source.texinfo"
-		},{
-			# @headings [on|off|single|double]
+			# [on|off|single|double]
 			name: "meta.command.headings.texinfo"
 			match: "((@)headings)\\s+(?:(on)|(off)|(single|double))\\b"
 			captures:
@@ -65,7 +88,7 @@ repository:
 				4: name: "constant.language.boolean.false.texinfo"
 				5: name: "constant.language.heading-type.$5.texinfo"
 		},{
-			# @setchapternewpage [on|off|odd]
+			# [on|off|odd]
 			name: "meta.command.setchapternewpage.texinfo"
 			match: "((@)setchapternewpage)\\s+(?:(on)|(off)|(odd))\\b"
 			captures:
@@ -75,7 +98,7 @@ repository:
 				4: name: "constant.language.boolean.false.texinfo"
 				5: name: "constant.language.odd.texinfo"
 		},{
-			# Commands which take `true` or `false` as their only argument
+			# [true|false]
 			name: "meta.command.$3.texinfo"
 			match: "((@)(allowcodebreaks))\\s+(true|false)(?=\\s|$)"
 			captures:
@@ -83,7 +106,7 @@ repository:
 				2: name: "punctuation.definition.function.texinfo"
 				4: name: "constant.language.boolean.$4.texinfo"
 		},{
-			# Commands which take `on` or `off` as their only argument
+			# [on|off]
 			name: "meta.command.$3.texinfo"
 			match: """(?x) ((@)
 				(codequotebacktick|codequoteundirected|deftypefnnewline
@@ -95,63 +118,27 @@ repository:
 				2: name: "punctuation.definition.function.texinfo"
 				4: name: "constant.language.boolean.true.texinfo"
 				5: name: "constant.language.boolean.false.texinfo"
-		},{
-			# Non-alphabetic commands
-			name: "keyword.operator.command.non-alphabetic.texinfo"
-			match: "(@)[-!\"'&*./:=?@\\\\^`{}~]"
-			captures:
-				1: name: "punctuation.definition.function.texinfo"
-		},{
-			# “Escaped” whitespace
-			name: "keyword.operator.command.whitespace.texinfo"
-			match: "(@)(?:( |\\t)|$)"
-			captures:
-				1: name: "punctuation.definition.function.texinfo"
-		},{
-			# @, - Generate cedilla accent
-			name: "meta.command.braced.texinfo"
-			begin: "((@),)({)"
-			end:   "}"
-			beginCaptures:
-				1: name: "keyword.operator.command.cedilla-accent.texinfo"
-				2: name: "punctuation.definition.function.texinfo"
-				3: name: "punctuation.section.scope.begin.texinfo"
-			endCaptures:
-				0: name: "punctuation.section.scope.end.texinfo"
-			patterns: [
-				name: "constant.character.texinfo"
-				match: "[^\\s{}@,]+"
-				
-				{include: "#comma"}
-				{include: "#main"}
-			]
-		},{
-			# Quotation blocks
-			name: "meta.command.$3.block.texinfo"
-			begin: "((@)(quotation|smallquotation))(?=\\s|$)"
-			end:   "((@)end\\s+\\3)\\b"
-			beginCaptures:
-				1: name: "keyword.operator.command.$3.texinfo"
-				2: name: "punctuation.definition.function.texinfo"
-			endCaptures:
-				1: name: "keyword.operator.command.end-$3.texinfo"
-				2: name: "punctuation.definition.function.texinfo"
-			contentName: "markup.quote.texinfo"
-			patterns: [include: "#main"]
-		},{
-			# Code examples
-			name: "meta.command.$3.block.texinfo"
-			begin: "((@)(example|smallexample|verbatim))(?=\\s|$)"
-			end:   "((@)end\\s+\\3)\\b"
-			beginCaptures:
-				1: name: "keyword.operator.command.$3.texinfo"
-				2: name: "punctuation.definition.function.texinfo"
-			endCaptures:
-				1: name: "keyword.operator.command.end-$3.texinfo"
-				2: name: "punctuation.definition.function.texinfo"
-			contentName: "markup.raw.texinfo"
-			patterns: [include: "#main"]
-		},{
+		}]
+	
+	
+	# Code examples
+	codeBlocks:
+		name: "meta.command.$3.block.texinfo"
+		begin: "((@)(example|smallexample|verbatim))(?=\\s|$)"
+		end:   "((@)end\\s+\\3)\\b"
+		beginCaptures:
+			1: name: "keyword.operator.command.$3.texinfo"
+			2: name: "punctuation.definition.function.texinfo"
+		endCaptures:
+			1: name: "keyword.operator.command.end-$3.texinfo"
+			2: name: "punctuation.definition.function.texinfo"
+		contentName: "markup.raw.texinfo"
+		patterns: [include: "#main"]
+	
+	
+	# Control flow
+	conditionals:
+		patterns: [{
 			# Conditionals which take arguments
 			name:  "meta.command.$3.conditional.block.texinfo"
 			begin: "((@)(ifclear|ifcommanddefined|ifcommandnotdefined|ifset))\\s+(\\S+)"
@@ -181,25 +168,18 @@ repository:
 				1: name: "keyword.control.command.end-$3.texinfo"
 				2: name: "punctuation.definition.function.texinfo"
 			patterns: [include: "#main"]
-		},{
-			# Block-type commands
-			name:  "meta.command.$3.block.texinfo"
-			begin: """(?x) ((@)
-				(cartouche|copying|direntry|display|docbook|documentdescription
-				|enumerate|float|flushleft|flushright|format|ftable|group|itemize
-				|multitable|raggedright|smalldisplay|smallformat|smallindentedblock
-				|table|titlepage|vtable))
-				(?=\\s|$)
-			"""
-			end: "((@)end\\s+\\3)\\b"
-			beginCaptures:
-				1: name: "keyword.operator.command.$3.texinfo"
-				2: name: "punctuation.definition.function.texinfo"
-			endCaptures:
-				1: name: "keyword.operator.command.end-$3.texinfo"
-				2: name: "punctuation.definition.function.texinfo"
-			patterns: [include: "#main"]
-		},{
+		}]
+	
+	
+	# Argument delimiter used in some contexts
+	comma:
+		name: "punctuation.separator.delimiter.comma.texinfo"
+		match: ","
+	
+	
+	# Generic command invocation
+	command:
+		patterns: [{
 			# `@command{args}`
 			name:  "meta.command.braced.texinfo"
 			begin: "((@)(\\w+))({)"
@@ -252,6 +232,56 @@ repository:
 			{match: "---", name: "constant.character.dash.em-dash.texinfo"}
 			{match: "--",  name: "constant.character.dash.en-dash.texinfo"}
 		]
+
+
+	# Quote blocks
+	quotation:
+		name: "meta.command.$3.block.texinfo"
+		begin: "((@)(quotation|smallquotation))(?=\\s|$)"
+		end:   "((@)end\\s+\\3)\\b"
+		beginCaptures:
+			1: name: "keyword.operator.command.$3.texinfo"
+			2: name: "punctuation.definition.function.texinfo"
+		endCaptures:
+			1: name: "keyword.operator.command.end-$3.texinfo"
+			2: name: "punctuation.definition.function.texinfo"
+		contentName: "markup.quote.texinfo"
+		patterns: [include: "#main"]
+
+
+	# Non-alphabetic commands
+	symbolCommands:
+		patterns: [{
+			name: "keyword.operator.command.non-alphabetic.texinfo"
+			match: "(@)[-!\"'&*./:=?@\\\\^`{}~]"
+			captures:
+				1: name: "punctuation.definition.function.texinfo"
+		},{
+			# “Escaped” whitespace
+			name: "keyword.operator.command.whitespace.texinfo"
+			match: "(@)(?:( |\\t)|$)"
+			captures:
+				1: name: "punctuation.definition.function.texinfo"
+		},{
+			# @, - Generate cedilla accent
+			name: "meta.command.braced.texinfo"
+			begin: "((@),)({)"
+			end:   "}"
+			beginCaptures:
+				1: name: "keyword.operator.command.cedilla-accent.texinfo"
+				2: name: "punctuation.definition.function.texinfo"
+				3: name: "punctuation.section.scope.begin.texinfo"
+			endCaptures:
+				0: name: "punctuation.section.scope.end.texinfo"
+			patterns: [
+				name: "constant.character.texinfo"
+				match: "[^\\s{}@,]+"
+				
+				{include: "#comma"}
+				{include: "#main"}
+			]
+		}]
+
 
 	# `\input texinfo`
 	texLine:
