@@ -36,6 +36,12 @@ repository:
 		]
 	
 	
+	# Argument delimiter used in some contexts
+	comma:
+		name: "punctuation.separator.delimiter.comma.texinfo"
+		match: ","
+	
+	
 	# Generic command invocation
 	command:
 		patterns: [{
@@ -61,10 +67,13 @@ repository:
 				3: name: "punctuation.section.scope.begin.texinfo"
 			endCaptures:
 				0: name: "punctuation.section.scope.end.texinfo"
-			patterns: [{
+			patterns: [
 				name: "constant.character.texinfo"
-				match: "[^\\s{}@]+"
-			}, include: "#main"]
+				match: "[^\\s{}@,]+"
+				
+				{include: "#comma"}
+				{include: "#main"}
+			]
 		},{
 			# `@command{args}`
 			name:  "meta.command.braced.texinfo"
@@ -76,10 +85,13 @@ repository:
 				4: name: "punctuation.section.scope.begin.texinfo"
 			endCaptures:
 				0: name: "punctuation.section.scope.end.texinfo"
-			patterns: [{
+			patterns: [
 				name: "variable.parameter.texinfo"
-				match: "[^\\s{}@]+"
-			}, include: "#main"]
+				match: "[^\\s{}@,]+"
+				
+				{include: "#comma"}
+				{include: "#main"}
+			]
 		},{
 			# `@command`
 			name: "keyword.operator.command.$2.texinfo"
