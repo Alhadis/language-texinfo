@@ -41,6 +41,7 @@ repository:
 			{include: "#dashes"}
 			{include: "#texLine"}
 			{include: "#alias"}
+			{include: "#menu"}
 			{include: "#booleanCommands"}
 			{include: "#symbolCommands"}
 			{include: "#quotation"}
@@ -335,8 +336,56 @@ repository:
 			{include: "#comma"}
 			{include: "#main"}
 		]
-
+		
 	
+	# `@menu` … `@end menu`
+	menu:
+		name: "meta.command.$3.block.texinfo"
+		begin: "((@)(detailmenu|direntry|menu))(?=\\s|$)"
+		end:   "((@)end\\s+\\3)\\b"
+		beginCaptures:
+			1: name: "keyword.operator.command.$3.texinfo"
+			2: name: "punctuation.definition.function.texinfo"
+		endCaptures:
+			1: name: "keyword.operator.command.end-$3.texinfo"
+			2: name: "punctuation.definition.function.texinfo"
+		patterns: [{
+			name:  "markup.list.texinfo"
+			begin: "^\\*\\s"
+			end:   "^(?=\\S)"
+			beginCaptures:
+				0: name: "punctuation.definition.list.menu.texinfo"
+			patterns: [{
+				# Entry name
+				begin: "\\G"
+				end:   "::?|(?=\\s*$)"
+				endCaptures:
+					0: name: "punctuation.separator.key-value.menu.texinfo"
+				contentName: "entity.name.tag.entry-name.texinfo"
+				patterns: [include: "#main"]
+			},{
+				# Node name
+				begin: "(?<=[^:]:)\\s*"
+				end:   "(\\.)|(?=\\s*$)"
+				endCaptures:
+					1: name: "punctuation.terminator.full-stop.period.texinfo"
+				contentName: "entity.name.node-name.texinfo"
+				patterns: [include: "#main"]
+			},{
+				# Description
+				name: "string.unquoted.description.texinfo"
+				begin: "(?<=::|\\.)"
+				end:   "^(?=\\S)"
+				patterns: [include: "#main"]
+			}]
+		},{
+			name:  "constant.other.menu-comment.texinfo"
+			begin: "^(?=[^\\s*])(?!end\\s)"
+			end:   "$"
+			patterns: [include: "#main"]
+		}, include: "#main"]
+
+
 	# Bareword/unquoted parameter
 	param:
 		name: "variable.parameter.texinfo"
