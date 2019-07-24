@@ -126,6 +126,80 @@ repository:
 				{include: "#main"}
 			]
 		},{
+			# Quotation blocks
+			name: "meta.command.$3.block.texinfo"
+			begin: "((@)(quotation|smallquotation))(?=\\s|$)"
+			end:   "((@)end\\s+\\3)\\b"
+			beginCaptures:
+				1: name: "keyword.operator.command.$3.texinfo"
+				2: name: "punctuation.definition.function.texinfo"
+			endCaptures:
+				1: name: "keyword.operator.command.end-$3.texinfo"
+				2: name: "punctuation.definition.function.texinfo"
+			contentName: "markup.quote.texinfo"
+			patterns: [include: "#main"]
+		},{
+			# Code examples
+			name: "meta.command.$3.block.texinfo"
+			begin: "((@)(example|smallexample|verbatim))(?=\\s|$)"
+			end:   "((@)end\\s+\\3)\\b"
+			beginCaptures:
+				1: name: "keyword.operator.command.$3.texinfo"
+				2: name: "punctuation.definition.function.texinfo"
+			endCaptures:
+				1: name: "keyword.operator.command.end-$3.texinfo"
+				2: name: "punctuation.definition.function.texinfo"
+			contentName: "markup.raw.texinfo"
+			patterns: [include: "#main"]
+		},{
+			# Conditionals which take arguments
+			name:  "meta.command.$3.conditional.block.texinfo"
+			begin: "((@)(ifclear|ifcommanddefined|ifcommandnotdefined|ifset))\\s+(\\S+)"
+			end:   "((@)end\\s+\\3)\\b"
+			beginCaptures:
+				1: name: "keyword.control.command.$3.texinfo"
+				2: name: "punctuation.definition.function.texinfo"
+				4: name: "variable.parameter.texinfo"
+			endCaptures:
+				1: name: "keyword.control.command.end-$3.texinfo"
+				2: name: "punctuation.definition.function.texinfo"
+			patterns: [include: "#main"]
+		},{
+			# Conditionals which don't
+			name: "meta.command.$3.conditional.block.texinfo"
+			begin: """(?x) ((@)
+				(ifdocbook|ifhtml|ifinfo|ifnotdocbook|ifnothtml|ifnotinfo|ifnotplaintext
+				|ifnottex|ifnotxml|ifplaintext|iftex|ifxml))
+				(?=\\s|$)
+			"""
+			end:   "((@)end\\s+\\3)\\b"
+			beginCaptures:
+				1: name: "keyword.control.command.$3.texinfo"
+				2: name: "punctuation.definition.function.texinfo"
+				4: name: "variable.parameter.texinfo"
+			endCaptures:
+				1: name: "keyword.control.command.end-$3.texinfo"
+				2: name: "punctuation.definition.function.texinfo"
+			patterns: [include: "#main"]
+		},{
+			# Block-type commands
+			name:  "meta.command.$3.block.texinfo"
+			begin: """(?x) ((@)
+				(cartouche|copying|direntry|display|docbook|documentdescription
+				|enumerate|float|flushleft|flushright|format|ftable|group|itemize
+				|multitable|raggedright|smalldisplay|smallformat|smallindentedblock
+				|table|titlepage|vtable))
+				(?=\\s|$)
+			"""
+			end: "((@)end\\s+\\3)\\b"
+			beginCaptures:
+				1: name: "keyword.operator.command.$3.texinfo"
+				2: name: "punctuation.definition.function.texinfo"
+			endCaptures:
+				1: name: "keyword.operator.command.end-$3.texinfo"
+				2: name: "punctuation.definition.function.texinfo"
+			patterns: [include: "#main"]
+		},{
 			# `@command{args}`
 			name:  "meta.command.braced.texinfo"
 			begin: "((@)(\\w+))({)"
