@@ -35,6 +35,33 @@ repository:
 			{include: "#command"}
 		]
 	
+	
+	# Generic command invocation
+	command:
+		patterns: [{
+			# `@command{args}`
+			name:  "meta.command.braced.texinfo"
+			begin: "((@)(\\w+))({)"
+			end:   "}"
+			beginCaptures:
+				1: name: "keyword.operator.command.$3.texinfo"
+				2: name: "punctuation.definition.function.texinfo"
+				4: name: "punctuation.section.scope.begin.texinfo"
+			endCaptures:
+				0: name: "punctuation.section.scope.end.texinfo"
+			patterns: [{
+				name: "variable.parameter.texinfo"
+				match: "[^\\s{}@]+"
+			}, include: "#main"]
+		},{
+			# `@command`
+			name: "keyword.operator.command.$2.texinfo"
+			match: "(@)(\\w+)"
+			captures:
+				1: name: "punctuation.definition.function.texinfo"
+		}]
+	
+	
 	# Comment lines
 	comments:
 		patterns: [{
