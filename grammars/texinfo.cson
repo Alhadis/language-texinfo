@@ -55,6 +55,47 @@ repository:
 				4: name: "punctuation.separator.separator.texinfo"
 				5: name: "entity.name.function.source.texinfo"
 		},{
+			# @headings [on|off|single|double]
+			name: "meta.command.headings.texinfo"
+			match: "((@)headings)\\s+(?:(on)|(off)|(single|double))\\b"
+			captures:
+				1: name: "keyword.operator.command.headings.texinfo"
+				2: name: "punctuation.defining.function.texinfo"
+				3: name: "constant.language.boolean.true.texinfo"
+				4: name: "constant.language.boolean.false.texinfo"
+				5: name: "constant.language.heading-type.$5.texinfo"
+		},{
+			# @setchapternewpage [on|off|odd]
+			name: "meta.command.setchapternewpage.texinfo"
+			match: "((@)setchapternewpage)\\s+(?:(on)|(off)|(odd))\\b"
+			captures:
+				1: name: "keyword.operator.command.headings.texinfo"
+				2: name: "punctuation.defining.function.texinfo"
+				3: name: "constant.language.boolean.true.texinfo"
+				4: name: "constant.language.boolean.false.texinfo"
+				5: name: "constant.language.odd.texinfo"
+		},{
+			# Commands which take `true` or `false` as their only argument
+			name: "meta.command.$3.texinfo"
+			match: "((@)(allowcodebreaks))\\s+(true|false)(?=\\s|$)"
+			captures:
+				1: name: "keyword.operator.command.$3.texinfo"
+				2: name: "punctuation.definition.function.texinfo"
+				4: name: "constant.language.boolean.$4.texinfo"
+		},{
+			# Commands which take `on` or `off` as their only argument
+			name: "meta.command.$3.texinfo"
+			match: """(?x) ((@)
+				(codequotebacktick|codequoteundirected|deftypefnnewline
+				|frenchspacing|validatemenus|xrefautomaticsectiontitle))
+				\\s+ (?:(on)|(off)) \\b
+			"""
+			captures:
+				1: name: "keyword.operator.command.$3.texinfo"
+				2: name: "punctuation.definition.function.texinfo"
+				4: name: "constant.language.boolean.true.texinfo"
+				5: name: "constant.language.boolean.false.texinfo"
+		},{
 			# Non-alphabetic commands
 			name: "keyword.operator.command.non-alphabetic.texinfo"
 			match: "(@)[-!\"'&*./:=?@\\\\^`{}~]"
