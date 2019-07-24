@@ -1,0 +1,8 @@
+{
+	"name": "language-texinfo",
+	"version": "0.0.0",
+	"description": "Syntax highlighting for GNU Texinfo manuals.",
+	"author": "John Gardner <gardnerjohng@gmail.com>",
+	"license": "ISC",
+	"keywords": ["Texinfo", "GNU", "Info", "TeX", "texi"]
+}

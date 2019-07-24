@@ -1,0 +1,3 @@
+".text.texinfo":
+	editor:
+		commentStart: "@c "

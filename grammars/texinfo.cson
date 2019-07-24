@@ -1,0 +1,72 @@
+name: "Texinfo"
+scopeName: "text.texinfo"
+fileTypes: [
+	"texinfo"
+	"texi"
+	"txi"
+]
+firstLineMatch: """(?x)
+	# TeX directive
+	^\\s*\\\\input\\s+texinfo\\s*$
+	|
+	# Modeline
+	(?i:
+		# Emacs
+		-\\*-(?:\\s*(?=[^:;\\s]+\\s*-\\*-)|(?:.*?[;\\s]|(?<=-\\*-))mode\\s*:\\s*)
+			texinfo
+		(?=[\\s;]|(?<![-*])-\\*-).*?-\\*-
+		
+		|
+		
+		# Vim
+		(?:(?:\\s|^)vi(?:m[<=>]?\\d+|m)?|\\sex)(?=:(?=\\s*set?\\s[^\\r\\n:]+:)|:(?!\\s* set?\\s))(?:(?:\\s|\\s*:\\s*)\\w*(?:\\s*=(?:[^\\r\\n\\\\\\s]|\\\\.)*)?)*[\\s:](?:filetype|ft|syntax)\\s*=
+			texinfo
+		(?=\\s|:|$)
+	)
+"""
+patterns: [include: "#main"]
+
+repository:
+	main:
+		patterns: [
+			{include: "#comments"}
+			{include: "#dashes"}
+			{include: "#texLine"}
+			{include: "#command"}
+		]
+	
+	# Comment lines
+	comments:
+		patterns: [{
+			# `@command` invocation
+			name: "comment.line.at-sign.texinfo"
+			begin: "((@)c(?:omment)?)(?=$|[^-A-Za-z0-9])"
+			end:   "$"
+			beginCaptures:
+				1: name: "keyword.operator.command.start-comment.texinfo"
+				2: name: "punctuation.definition.function.texinfo"
+		},{
+			# TeX-style comment
+			name: "comment.line.tex-style.texinfo"
+			begin: "\\x7F"
+			end:   "$"
+			beginCaptures:
+				0: name: "punctuation.whitespace.delete.texinfo"
+		}]
+	
+	
+	# Em/en dashes
+	dashes:
+		patterns: [
+			{match: "---", name: "constant.character.dash.em-dash.texinfo"}
+			{match: "--",  name: "constant.character.dash.en-dash.texinfo"}
+		]
+
+	# `\input texinfo`
+	texLine:
+		match: "^\\s*((\\\\)input)\\s+([^@\\s\\x7F]+)"
+		captures:
+			1: name: "support.function.general.tex"
+			2: name: "punctuation.definition.function.tex"
+			3: name: "support.constant.language.other.tex"
+			
