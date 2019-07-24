@@ -24,7 +24,14 @@ firstLineMatch: """(?x)
 		(?=\\s|:|$)
 	)
 """
-patterns: [include: "#main"]
+patterns: [{
+	# \input texinfo.tex
+	match: "\\A\\s*((\\\\)input)\\s+([^@\\s\\x7F]+)"
+	captures:
+		1: name: "support.function.general.tex"
+		2: name: "punctuation.definition.function.tex"
+		3: name: "support.constant.language.other.tex"
+}, include: "#main"]
 
 repository:
 	main:
@@ -281,13 +288,3 @@ repository:
 				{include: "#main"}
 			]
 		}]
-
-
-	# `\input texinfo`
-	texLine:
-		match: "^\\s*((\\\\)input)\\s+([^@\\s\\x7F]+)"
-		captures:
-			1: name: "support.function.general.tex"
-			2: name: "punctuation.definition.function.tex"
-			3: name: "support.constant.language.other.tex"
-			
