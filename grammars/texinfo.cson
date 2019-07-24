@@ -48,6 +48,7 @@ repository:
 			{include: "#codeBlocks"}
 			{include: "#conditionals"}
 			{include: "#blockCommands"}
+			{include: "#lineCommands"}
 			{include: "#rawTex"}
 			{include: "#rawHTML"}
 			{include: "#rawXML"}
@@ -221,9 +222,7 @@ repository:
 			endCaptures:
 				0: name: "punctuation.section.scope.end.texinfo"
 			patterns: [
-				name: "variable.parameter.texinfo"
-				match: "[^\\s{}@,]+"
-				
+				{include: "#param"}
 				{include: "#comma"}
 				{include: "#main"}
 			]
@@ -262,6 +261,57 @@ repository:
 			{match: "---", name: "constant.character.dash.em-dash.texinfo"}
 			{match: "--",  name: "constant.character.dash.en-dash.texinfo"}
 		]
+
+	
+	# Commands which read the rest of the line as an argument list
+	lineCommands:
+		name: "meta.command.$3.line.texinfo"
+		begin: """(?x) ^ ((@)
+			(appendixsection|appendixsec|appendixsubsec|appendixsubsubsec|appendix
+			|author|centerchap|center|chapheading|chapter|cindex|clear|defcodeindex
+			|defcvx|defcv|deffnx|deffn|defindex|definfoenclose|defivarx|defivar
+			|defmacx|defmac|defmethodx|defmethod|defoptx|defopt|defopx|defop
+			|defspecx|defspec|deftpx|deftp|deftypecvx|deftypecv|deftypefnx
+			|deftypefn|deftypefunx|deftypefun|deftypeivarx|deftypeivar|deftypemethodx
+			|deftypemethod|deftypeopx|deftypeop|deftypevarx|deftypevar|deftypevrx
+			|deftypevr|defunx|defun|defvarx|defvar|defvrx|defvr|dircategory
+			|documentencoding|documentlanguage|enumerate|evenfooting|evenheading
+			|everyfooting|everyheading|exampleindent|exdent|findex|firstparagraphindent
+			|fonttextsize|footnotestyle|ftable|heading|include|itemize|item
+			|kbdinputstyle|kindex|macro|majorheading|multitable|need|node
+			|oddfooting|oddheading|pagesizes|paragraphindent|part|pindex|printindex
+			|section|setfilename|settitle|set|shorttitlepage|sortas|sp|strong
+			|subheading|subsection|subsubheading|subsubsection|subtitle|sub|sup
+			|syncodeindex|synindex|table|tindex|title|top|unmacro|unnumberedsec
+			|unnumberedsubsec|unnumberedsubsubsec|unnumbered|urefbreakstyle
+			|verbatiminclude|vindex|vskip|vtable))
+			(?=\\s|$)
+		"""
+		end: "$"
+		beginCaptures:
+			1: name: "keyword.operator.command.$3.texinfo"
+			2: name: "punctuation.definition.function.texinfo"
+		endCaptures:
+			1: name: "keyword.operator.command.end-$3.texinfo"
+			2: name: "punctuation.definition.function.texinfo"
+		contentName: "markup.raw.texinfo"
+		patterns: [
+			# `@|` separators used in heading-type commands
+			name: "keyword.operator.command.separator.texinfo"
+			match: "(@)\\|"
+			captures:
+				1: name: "punctuation.definition.function.texinfo"
+			
+			{include: "#param"}
+			{include: "#comma"}
+			{include: "#main"}
+		]
+
+	
+	# Bareword/unquoted parameter
+	param:
+		name: "variable.parameter.texinfo"
+		match: "[^\\s{}@,]+"
 
 
 	# Quote blocks
