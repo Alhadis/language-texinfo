@@ -39,6 +39,33 @@ repository:
 	# Generic command invocation
 	command:
 		patterns: [{
+			# Non-alphabetic commands
+			name: "keyword.operator.command.non-alphabetic.texinfo"
+			match: "(@)[-!\"'&*./:=?@\\\\^`{}~]"
+			captures:
+				1: name: "punctuation.definition.function.texinfo"
+		},{
+			# “Escaped” whitespace
+			name: "keyword.operator.command.whitespace.texinfo"
+			match: "(@)(?:( |\\t)|$)"
+			captures:
+				1: name: "punctuation.definition.function.texinfo"
+		},{
+			# @, - Generate cedilla accent
+			name: "meta.command.braced.texinfo"
+			begin: "((@),)({)"
+			end:   "}"
+			beginCaptures:
+				1: name: "keyword.operator.command.cedilla-accent.texinfo"
+				2: name: "punctuation.definition.function.texinfo"
+				3: name: "punctuation.section.scope.begin.texinfo"
+			endCaptures:
+				0: name: "punctuation.section.scope.end.texinfo"
+			patterns: [{
+				name: "constant.character.texinfo"
+				match: "[^\\s{}@]+"
+			}, include: "#main"]
+		},{
 			# `@command{args}`
 			name:  "meta.command.braced.texinfo"
 			begin: "((@)(\\w+))({)"
