@@ -44,6 +44,7 @@ repository:
 			{include: "#booleanCommands"}
 			{include: "#symbolCommands"}
 			{include: "#quotation"}
+			{include: "#verbatim"}
 			{include: "#codeBlocks"}
 			{include: "#conditionals"}
 			{include: "#blockCommands"}
@@ -364,3 +365,19 @@ repository:
 				{include: "#main"}
 			]
 		}]
+
+
+	# Inline code literal: `@verb{|…|}`
+	verbatim:
+		name:  "meta.command.braced.verb.texinfo"
+		begin: "((@)verb)({)([^}])"
+		end:   "(\\4)(})"
+		contentName: "string.quoted.other.verbatim.texinfo"
+		beginCaptures:
+			1: name: "keyword.operator.command.verb.texinfo"
+			2: name: "punctuation.definition.function.texinfo"
+			3: name: "punctuation.section.scope.begin.texinfo"
+			4: name: "punctuation.arbitrary.delimiter.begin.texinfo"
+		endCaptures:
+			1: name: "punctuation.arbitrary.delimiter.end.texinfo"
+			0: name: "punctuation.section.scope.end.texinfo"
