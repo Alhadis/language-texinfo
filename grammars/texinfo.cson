@@ -49,6 +49,7 @@ repository:
 			{include: "#conditionals"}
 			{include: "#blockCommands"}
 			{include: "#lineCommands"}
+			{include: "#ignored"}
 			{include: "#rawTex"}
 			{include: "#rawHTML"}
 			{include: "#rawXML"}
@@ -261,6 +262,34 @@ repository:
 			{match: "---", name: "constant.character.dash.em-dash.texinfo"}
 			{match: "--",  name: "constant.character.dash.en-dash.texinfo"}
 		]
+
+	
+	# Stuff that isn't included in the output
+	ignored:
+		patterns: [{
+			# `@ignore` … `@end ignore`
+			name:  "meta.command.ignore.block.texinfo"
+			begin: "((@)ignore)(?=\\s|$)"
+			end:   "((@)end\\s+ignore)\\b"
+			beginCaptures:
+				1: name: "keyword.operator.command.ignore.texinfo"
+				2: name: "punctuation.definition.function.texinfo"
+			endCaptures:
+				1: name: "keyword.operator.command.end-ignore.texinfo"
+				2: name: "punctuation.definition.function.texinfo"
+			contentName: "comment.block.ignored.texinfo"
+			patterns: [include: "#main"]
+		},{
+			# `@bye`
+			name:  "meta.command.bye.block.texinfo"
+			begin: "^((@)bye)(?=\\s|$)"
+			end:   "(?=A)B"
+			beginCaptures:
+				1: name: "keyword.operator.command.bye.texinfo"
+				2: name: "punctuation.definition.function.texinfo"
+			contentName: "comment.block.ignored.texinfo"
+			patterns: [include: "#main"]
+		}]
 
 	
 	# Commands which read the rest of the line as an argument list
