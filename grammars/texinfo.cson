@@ -24,6 +24,7 @@ firstLineMatch: """(?x)
 		(?=\\s|:|$)
 	)
 """
+injectionSelector: "emacs.lisp"
 patterns: [{
 	# \input texinfo.tex
 	match: "\\A\\s*((\\\\)input)\\s+([^@\\s\\x7F]+)"
@@ -46,6 +47,9 @@ repository:
 			{include: "#codeBlocks"}
 			{include: "#conditionals"}
 			{include: "#blockCommands"}
+			{include: "#rawTex"}
+			{include: "#rawHTML"}
+			{include: "#rawXML"}
 			{include: "#command"}
 		]
 	
@@ -66,10 +70,10 @@ repository:
 	blockCommands:
 		name:  "meta.command.$3.block.texinfo"
 		begin: """(?x) ((@)
-			(cartouche|copying|direntry|display|docbook|documentdescription
-			|enumerate|float|flushleft|flushright|format|ftable|group|itemize
-			|multitable|raggedright|smalldisplay|smallformat|smallindentedblock
-			|table|titlepage|vtable))
+			(cartouche|copying|direntry|display|documentdescription|enumerate
+			|float|flushleft|flushright|format|ftable|group|itemize|multitable
+			|raggedright|smalldisplay|smallformat|smallindentedblock|table
+			|titlepage|vtable))
 			(?=\\s|$)
 		"""
 		end: "((@)end\\s+\\3)\\b"
@@ -130,17 +134,35 @@ repository:
 	
 	# Code examples
 	codeBlocks:
-		name: "meta.command.$3.block.texinfo"
-		begin: "((@)(example|smallexample|verbatim))(?=\\s|$)"
-		end:   "((@)end\\s+\\3)\\b"
-		beginCaptures:
-			1: name: "keyword.operator.command.$3.texinfo"
-			2: name: "punctuation.definition.function.texinfo"
-		endCaptures:
-			1: name: "keyword.operator.command.end-$3.texinfo"
-			2: name: "punctuation.definition.function.texinfo"
-		contentName: "markup.raw.texinfo"
-		patterns: [include: "#main"]
+		patterns: [{
+			# Lisp code
+			name: "meta.command.$3.block.texinfo"
+			begin: "((@)(lisp|smalllisp))(?=\\s|$)"
+			end:   "((@)end\\s+\\3)\\b"
+			beginCaptures:
+				1: name: "keyword.operator.command.$3.texinfo"
+				2: name: "punctuation.definition.function.texinfo"
+			endCaptures:
+				1: name: "keyword.operator.command.end-$3.texinfo"
+				2: name: "punctuation.definition.function.texinfo"
+			contentName: "source.embedded.emacs.lisp"
+			patterns: [
+				{include: "source.emacs.lisp"}
+				{include: "#main"}
+			]
+		},{
+			name: "meta.command.$3.block.texinfo"
+			begin: "((@)(example|smallexample|verbatim))(?=\\s|$)"
+			end:   "((@)end\\s+\\3)\\b"
+			beginCaptures:
+				1: name: "keyword.operator.command.$3.texinfo"
+				2: name: "punctuation.definition.function.texinfo"
+			endCaptures:
+				1: name: "keyword.operator.command.end-$3.texinfo"
+				2: name: "punctuation.definition.function.texinfo"
+			contentName: "markup.raw.texinfo"
+			patterns: [include: "#main"]
+		}]
 	
 	
 	# Control flow
@@ -254,6 +276,60 @@ repository:
 			2: name: "punctuation.definition.function.texinfo"
 		contentName: "markup.quote.texinfo"
 		patterns: [include: "#main"]
+
+
+	# `@html` … `@end html`
+	rawHTML:
+		name:  "meta.command.raw-html.block.texinfo"
+		begin: "((@)html)(?=\\s|$)"
+		end:   "((@)end\\s+html)\\b"
+		beginCaptures:
+			1: name: "keyword.operator.command.html.texinfo"
+			2: name: "punctuation.definition.function.texinfo"
+		endCaptures:
+			1: name: "keyword.operator.command.end-html.texinfo"
+			2: name: "punctuation.definition.function.texinfo"
+		contentName: "source.embedded.html"
+		patterns: [
+			{include: "#main"}
+			{include: "text.html.basic"}
+		]
+
+
+	# `@tex` … `@end tex`
+	rawTex:
+		name:  "meta.command.raw-tex.block.texinfo"
+		begin: "((@)tex)(?=\\s|$)"
+		end:   "((@)end\\s+tex)\\b"
+		beginCaptures:
+			1: name: "keyword.operator.command.tex.texinfo"
+			2: name: "punctuation.definition.function.texinfo"
+		endCaptures:
+			1: name: "keyword.operator.command.end-tex.texinfo"
+			2: name: "punctuation.definition.function.texinfo"
+		contentName: "source.embedded.tex"
+		patterns: [
+			{include: "#main"}
+			{include: "text.tex.latex"}
+		]
+	
+	
+	# `@xml`…`@end xml` / `@docbook …`@end docbook`
+	rawXML:
+		name:  "meta.command.raw-$3.block.texinfo"
+		begin: "((@)(docbook|xml))(?=\\s|$)"
+		end:   "((@)end\\s+\\3)\\b"
+		beginCaptures:
+			1: name: "keyword.operator.command.$3.texinfo"
+			2: name: "punctuation.definition.function.texinfo"
+		endCaptures:
+			1: name: "keyword.operator.command.end-$3.texinfo"
+			2: name: "punctuation.definition.function.texinfo"
+		contentName: "source.embedded.xml"
+		patterns: [
+			{include: "#main"}
+			{include: "text.xml"}
+		]
 
 
 	# Non-alphabetic commands
