@@ -45,6 +45,16 @@ repository:
 	# Generic command invocation
 	command:
 		patterns: [{
+			# @alias [new]=[existing]
+			name: "meta.command.alias.texinfo"
+			match: "((@)alias)\\s+([^=\\s]+)\\s*(=)\\s*([^=\\s]+)"
+			captures:
+				1: name: "keyword.operator.command.alias.texinfo"
+				2: name: "punctuation.definition.function.texinfo"
+				3: name: "entity.name.function.alias.texinfo"
+				4: name: "punctuation.separator.separator.texinfo"
+				5: name: "entity.name.function.source.texinfo"
+		},{
 			# Non-alphabetic commands
 			name: "keyword.operator.command.non-alphabetic.texinfo"
 			match: "(@)[-!\"'&*./:=?@\\\\^`{}~]"
