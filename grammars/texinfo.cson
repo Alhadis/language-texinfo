@@ -45,6 +45,8 @@ repository:
 			{include: "#booleanCommands"}
 			{include: "#symbolCommands"}
 			{include: "#quotation"}
+			{include: "#boldText"}
+			{include: "#italicText"}
 			{include: "#verbatim"}
 			{include: "#codeBlocks"}
 			{include: "#conditionals"}
@@ -78,16 +80,52 @@ repository:
 			|float|flushleft|flushright|format|ftable|group|itemize|multitable
 			|raggedright|smalldisplay|smallformat|smallindentedblock|table
 			|titlepage|vtable))
-			(?=\\s|$)
+			(?=\\s|$)(.*)
 		"""
 		end: "((@)end\\s+\\3)\\b"
 		beginCaptures:
 			1: name: "keyword.operator.command.$3.texinfo"
 			2: name: "punctuation.definition.function.texinfo"
+			4: patterns: [{include: "#param"}, {include: "#main"}]
 		endCaptures:
 			1: name: "keyword.operator.command.end-$3.texinfo"
 			2: name: "punctuation.definition.function.texinfo"
 		patterns: [include: "#main"]
+	
+	
+	# Stuff which Emacs displays in bold (so we probably should too)
+	boldText:
+		patterns: [{
+			# `@braced{args}`
+			name:  "meta.command.$3.braced.texinfo"
+			begin: "((@)(b|strong))({)"
+			end:   "}"
+			contentName: "markup.bold.texinfo"
+			beginCaptures:
+				1: name: "keyword.operator.command.$3.texinfo"
+				2: name: "punctuation.definition.function.texinfo"
+				4: name: "punctuation.section.scope.begin.texinfo"
+			endCaptures:
+				0: name: "punctuation.section.scope.end.texinfo"
+			patterns: [include: "#main"]
+		},{
+			# `@line text`
+			name: "meta.command.$3.line.texinfo"
+			begin: """(?x) ^ ((@)
+				(appendixsection|appendixsec|appendixsubsec|appendixsubsubsec|appendix
+				|chapheading|chapter|heading|majorheading|section|subheading|subsection
+				|subsubheading|subsubsection|top|unnumberedsec|unnumberedsubsec
+				|unnumberedsubsubsec|unnumbered))
+				(?=\\s|$)
+			"""
+			end: "$"
+			contentName: "markup.heading.string.unquoted.texinfo"
+			beginCaptures:
+				0: name: "markup.bold.texinfo"
+				1: name: "keyword.operator.command.$3.texinfo"
+				2: name: "punctuation.definition.function.texinfo"
+			patterns: [include: "#main"]
+		}]
 	
 	
 	# Commands which take boolean-like values as their only argument
@@ -292,37 +330,44 @@ repository:
 			patterns: [include: "#main"]
 		}]
 
+
+	# Inline commands that Emacs italicises/underlines
+	italicText:
+		name:  "meta.command.$3.braced.texinfo"
+		begin: "((@)(i|emph|sc|slanted))({)"
+		end:   "}"
+		contentName: "markup.italic.texinfo"
+		beginCaptures:
+			1: name: "keyword.operator.command.$3.texinfo"
+			2: name: "punctuation.definition.function.texinfo"
+			4: name: "punctuation.section.scope.begin.texinfo"
+		endCaptures:
+			0: name: "punctuation.section.scope.end.texinfo"
+		patterns: [include: "#main"]
+	
 	
 	# Commands which read the rest of the line as an argument list
 	lineCommands:
 		name: "meta.command.$3.line.texinfo"
 		begin: """(?x) ^ ((@)
-			(appendixsection|appendixsec|appendixsubsec|appendixsubsubsec|appendix
-			|author|centerchap|center|chapheading|chapter|cindex|clear|defcodeindex
-			|defcvx|defcv|deffnx|deffn|defindex|definfoenclose|defivarx|defivar
-			|defmacx|defmac|defmethodx|defmethod|defoptx|defopt|defopx|defop
-			|defspecx|defspec|deftpx|deftp|deftypecvx|deftypecv|deftypefnx
-			|deftypefn|deftypefunx|deftypefun|deftypeivarx|deftypeivar|deftypemethodx
-			|deftypemethod|deftypeopx|deftypeop|deftypevarx|deftypevar|deftypevrx
-			|deftypevr|defunx|defun|defvarx|defvar|defvrx|defvr|dircategory
-			|documentencoding|documentlanguage|enumerate|evenfooting|evenheading
-			|everyfooting|everyheading|exampleindent|exdent|findex|firstparagraphindent
-			|fonttextsize|footnotestyle|ftable|heading|include|itemize|item
-			|kbdinputstyle|kindex|macro|majorheading|multitable|need|node
-			|oddfooting|oddheading|pagesizes|paragraphindent|part|pindex|printindex
-			|section|setfilename|settitle|set|shorttitlepage|sortas|sp|strong
-			|subheading|subsection|subsubheading|subsubsection|subtitle|sub|sup
-			|syncodeindex|synindex|table|tindex|title|top|unmacro|unnumberedsec
-			|unnumberedsubsec|unnumberedsubsubsec|unnumbered|urefbreakstyle
-			|verbatiminclude|vindex|vskip|vtable))
+			(author|centerchap|center|cindex|clear|defcodeindex|defcvx|defcv|deffnx
+			|deffn|defindex|definfoenclose|defivarx|defivar|defmacx|defmac|defmethodx
+			|defmethod|defoptx|defopt|defopx|defop|defspecx|defspec|deftpx|deftp
+			|deftypecvx|deftypecv|deftypefnx|deftypefn|deftypefunx|deftypefun
+			|deftypeivarx|deftypeivar|deftypemethodx|deftypemethod|deftypeopx
+			|deftypeop|deftypevarx|deftypevar|deftypevrx|deftypevr|defunx|defun
+			|defvarx|defvar|defvrx|defvr|dircategory|documentencoding|documentlanguage
+			|enumerate|evenfooting|even|everyfooting|everyexampleindent|exdent|findex
+			|firstparagraphindent|fonttextsize|footnotestyle|ftable|include|itemize
+			|kbdinputstyle|kindex|macro|multitable|need|node|oddfooting|oddpagesizes
+			|paragraphindent|part|pindex|printindex|setfilename|settitle|set
+			|shorttitlepage|sortas|sp|strong|subtitle|sub|sup|syncodeindex|synindex
+			|table|tindex|title|unmacro|urefbreakstyle|verbatiminclude|vindex|vskip|vtable))
 			(?=\\s|$)
 		"""
 		end: "$"
 		beginCaptures:
 			1: name: "keyword.operator.command.$3.texinfo"
-			2: name: "punctuation.definition.function.texinfo"
-		endCaptures:
-			1: name: "keyword.operator.command.end-$3.texinfo"
 			2: name: "punctuation.definition.function.texinfo"
 		contentName: "markup.raw.texinfo"
 		patterns: [
@@ -380,8 +425,8 @@ repository:
 			}]
 		},{
 			name:  "constant.other.menu-comment.texinfo"
-			begin: "^(?=[^\\s*])(?!end\\s)"
-			end:   "$"
+			begin: "^(?=[^\\s*])(?!@end\\s)"
+			end:   "$|(?=\\s*@end\\s)"
 			patterns: [include: "#main"]
 		}, include: "#main"]
 
