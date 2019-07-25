@@ -1,0 +1,2 @@
+*.cson linguist-detectable=true
+/*.png export-ignore
