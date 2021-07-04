@@ -9,9 +9,11 @@ This project honours [Semantic Versioning](http://semver.org).
 [Staged]
 ------------------------------------------------------------------------
 * Added this change-log
+* Added grammar for compiled [`*.info`][2] documents
 * Fixed [various inaccuracies][1] related to modeline matching
 
 [1]: https://github.com/github/linguist/pull/5271
+[2]: https://gnu.org/software/texinfo/manual/texinfo/html_node/Info-Files.html
 
 
 [v1.0.0]

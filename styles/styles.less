@@ -1,0 +1,34 @@
+@import "syntax-variables";
+
+// ASCII control characters
+.syntax--punctuation.syntax--c0.syntax--ctrl-char,
+.syntax--punctuation.syntax--whitespace.syntax--form-feed{
+	&.syntax--info, .syntax--info &{
+		opacity: 0.5;
+		width: 2ch;
+		display: inline-block;
+		position: relative;
+		color: transparent;
+		
+		&::after{
+			color: @syntax-color-function;
+			position: absolute;
+			left: 0;
+			width: 100%;
+			text-align: center;
+		}
+		
+		// Placeholders
+		&.syntax--form-feed       { &::after{ content: "\\f"; }}
+		&.syntax--unit-separator  { &::after{ content: "^_";  }}
+		&.syntax--delete          { &::after{ content: "^?";  }}
+	}
+}
+
+// Theme-specific highlighting tweaks
+.theme-seti-syntax .syntax--text.syntax--info{
+	.syntax--storage.syntax--type,
+	.syntax--variable.syntax--pointer { color: #cc3e44; }
+	.syntax--markup.syntax--heading   { color: #e37933; }
+	.syntax--punctuation              { color: #2d3e3a; }
+}

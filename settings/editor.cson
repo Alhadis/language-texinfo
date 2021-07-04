@@ -1,3 +1,9 @@
 ".text.texinfo":
 	editor:
 		commentStart: "@c "
+
+".text.info":
+	"line-ending-selector":
+		defaultLineEnding: "LF"
+	whitespace:
+		removeTrailingWhitespace: false
