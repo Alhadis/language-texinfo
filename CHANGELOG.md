@@ -9,6 +9,7 @@ This project honours [Semantic Versioning](http://semver.org).
 [Staged]
 ------------------------------------------------------------------------
 * Fixed highlighting of external manual references
+* Fixed termination of menu lists in `.info` files
 
 
 [v1.1.0]

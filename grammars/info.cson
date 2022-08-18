@@ -128,7 +128,7 @@ repository:
 	menu:
 		name:  "meta.menu.info"
 		begin: "^(\\*)\\s+([Mm]enu)(:)(.*)"
-		end:   "(?=^[^\\s*]|\\x1F|\\f)"
+		end:   "(?=\\x1F|\\f)"
 		beginCaptures:
 			0: name: "markup.list.unnumbered.menu.info"
 			1: name: "punctuation.definition.list.info"
