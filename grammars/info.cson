@@ -116,7 +116,7 @@ repository:
 	# Parenthesised name of another Info manual
 	manualName:
 		name:  "meta.manual-name.info"
-		begin: "\\G(\\()(?=.*?\\))"
+		begin: "(?:^|\\G)(\\()(?=.*?\\))"
 		end:   "\\)"
 		beginCaptures: 1: name: "punctuation.definition.reference.manual.begin.info"
 		endCaptures:   0: name: "punctuation.definition.reference.manual.end.info"
@@ -146,13 +146,14 @@ repository:
 		patterns: [{
 			# * Node and topic name::
 			name:  "meta.topic.single-name.info"
-			begin: "^(\\*)\\s+((?![\\s*\\x1F]|:\\s)(?:(?!:\\s).)+)(::)(?=\\s|$)[ \\t]*"
+			begin: "^(\\*)\\s+(\\(.+?\\)\\s*)?((?![\\s*\\x1F]|:\\s)(?:(?!:\\s).)+)(::)(?=\\s|$)[ \\t]*"
 			end:   "(?=^[\\*\\x1F\\f]|^[ \\t]*$|\\x1F|\\f)"
 			beginCaptures:
 				0: name: "markup.list.unnumbered.menu.info"
 				1: name: "punctuation.definition.list.info"
-				2: name: "entity.name.tag.topic.info", patterns: [include: "#escape"]
-				3: name: "punctuation.delimiter.separator.colon.info"
+				2: patterns: [include: "#manualName"]
+				3: name: "entity.name.tag.topic.info", patterns: [include: "#escape"]
+				4: name: "punctuation.delimiter.separator.colon.info"
 			contentName: "string.unquoted.description.info"
 		},{
 			# * Topic name: (node-name).
@@ -167,8 +168,10 @@ repository:
 			patterns: [{
 				# Node name, separated from label by a single `:`
 				contentName: "entity.name.node.info"
-				begin: "\\G(?=[^\\s.,])"
+				begin: "\\G(\\(.+?\\))?(?=[^\\s.,])"
 				end:   "[.,\\t]|$"
+				beginCaptures:
+					1: patterns: [include: "#manualName"]
 				endCaptures:
 					0: name: "punctuation.terminator.topic.info"
 				patterns: [

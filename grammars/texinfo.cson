@@ -678,6 +678,17 @@ repository:
 		{include: "#main"}]
 		
 	
+	# Name of an external Texinfo manual
+	manualName:
+		name:  "meta.manual-name.texinfo"
+		begin: "(?:^|\\G)\\s*\\("
+		end:   "\\)"
+		beginCaptures: 0: name: "punctuation.definition.reference.manual.begin.texinfo"
+		endCaptures:   0: name: "punctuation.definition.reference.manual.end.texinfo"
+		contentName: "constant.other.reference.link.texinfo"
+		patterns: [include: "#main"]
+
+
 	# `@menu` … `@end menu`
 	menu:
 		name: "meta.command.$3.block.texinfo"
@@ -697,16 +708,20 @@ repository:
 				0: name: "punctuation.definition.list.menu.texinfo"
 			patterns: [{
 				# Entry name
-				begin: "\\G"
+				begin: "\\G(\\s*\\(.*?\\))?"
 				end:   "::?|(?=\\s*$)"
+				beginCaptures:
+					1: patterns: [include: "#manualName"]
 				endCaptures:
 					0: name: "punctuation.separator.key-value.menu.texinfo"
 				contentName: "entity.name.tag.entry-name.texinfo"
 				patterns: [include: "#main"]
 			},{
 				# Node name
-				begin: "(?<=[^:]:)\\s*"
+				begin: "(?<=[^:]:)\\s*(\\(.*?\\))?"
 				end:   "(\\.)|(?=\\s*$)"
+				beginCaptures:
+					1: patterns: [include: "#manualName"]
 				endCaptures:
 					1: name: "punctuation.terminator.full-stop.period.texinfo"
 				contentName: "entity.name.node-name.texinfo"

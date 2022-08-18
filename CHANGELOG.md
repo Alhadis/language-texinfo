@@ -6,6 +6,11 @@ This project honours [Semantic Versioning](http://semver.org).
 [Staged]: ../../compare/v1.1.0...HEAD
 
 
+[Staged]
+------------------------------------------------------------------------
+* Fixed highlighting of external manual references
+
+
 [v1.1.0]
 ------------------------------------------------------------------------
 **July 4th, 2021**  
