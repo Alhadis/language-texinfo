@@ -1,2 +1,5 @@
-*.cson linguist-detectable=true
+# Include CSON files in GitHub's language breakdown graph
+*.cson linguist-detectable
+
+# Exclude 81.3 KB screenshot from package distribution
 /*.png export-ignore
