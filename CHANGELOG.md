@@ -3,13 +3,16 @@ Change Log
 
 This project honours [Semantic Versioning](http://semver.org).
 
-[Staged]: ../../compare/v1.1.0...HEAD
+[Staged]: ../../compare/v1.1.1...HEAD
 
 
-[Staged]
+[v1.1.1]
 ------------------------------------------------------------------------
+**September 1st, 2022**  
 * Fixed highlighting of external manual references
 * Fixed termination of menu lists in `.info` files
+
+[v1.1.1]: https://github.com/Alhadis/language-texinfo/releases/v1.1.1
 
 
 [v1.1.0]
